@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Голосование</title>
+    <script>
+        function vote() {
+            var selectedOption = document.querySelector('input[name="option"]:checked');
+            var resultDiv = document.getElementById('result');
+
+            if (selectedOption) {
+                fetch('http://localhost:5000/vote', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ option: selectedOption.value }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    resultDiv.innerHTML = data.message;
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                });
+            } else {
+                resultDiv.innerHTML = "Пожалуйста, выберите одну из опций.";
+            }
+        }
+
+        function showResults() {
+            var resultDiv = document.getElementById('result');
+
+            fetch('http://localhost:5000/results')
+                .then(response => response.json())
+                .then(data => {
+                    resultDiv.innerHTML = "Результаты голосования: " + JSON.stringify(data.results);
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                });
+        }
+    </script>
+</head>
+<body>
+    <h2>Выберите команду:</h2>
+    <form>
+        <input type="radio" name="option" value="Команда №1"> Команда 1<br>
+        <input type="radio" name="option" value="Команда №2"> Команда 2<br>
+        <input type="radio" name="option" value="Команда №3"> Команда 3<br>
+        <input type="radio" name="option" value="Команда №4"> Команда 4<br>
+        <input type="radio" name="option" value="Команда №5"> Команда 5<br>
+        <input type="radio" name="option" value="Команда №6"> Команда 6<br>
+
+        <button type="button" onclick="vote()">Проголосовать</button>
+        <button type="button" onclick="showResults()">Показать результаты</button>
+    </form>
+
+    <div id="result"></div>
+</body>
+</html>
